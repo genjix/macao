@@ -5,7 +5,8 @@
 TEMPLATE = app
 TARGET = wallet
 QT += core gui
-SOURCES += wallet.cpp
+HEADERS += beginwindow.h
+SOURCES += main.cpp beginwindow.cpp
 unix {
     CONFIG += link_pkgconfig
     PKGCONFIG += libbitcoin libobelisk
