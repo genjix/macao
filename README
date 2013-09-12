@@ -1,0 +1,11 @@
+Create new accounts with the bash script:
+
+  $ ./new-account.sh
+
+Print out the qrcode.png and qrcode-private.png.
+
+qrcode.png is your unencrypted receiving Bitcoin address.
+qrcode-private.png is your encrypted sending seed (for private keys).
+
+To run the point of sale software see wallet/README
+

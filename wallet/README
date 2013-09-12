@@ -1,0 +1,6 @@
+Dependencies: libqt4-dev
+
+  $ qmake
+  $ make
+  $ ./wallet
+
