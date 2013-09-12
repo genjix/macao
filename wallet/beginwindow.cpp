@@ -47,7 +47,20 @@ void BeginWindow::reset()
 void BeginWindow::begin()
 {
     hide();
-    redi::ipstream proc("python scan-seed.py");
+    bool ok;
+    QString text = QInputDialog::getText(
+        this, tr("Enter your password"),
+        tr("Password: "), QLineEdit::Password,
+        "", &ok);
+    if (!ok)
+    {
+        QMessageBox errmsg;
+        errmsg.critical(0, tr("Error"), tr("Password needs to be entered!"));
+        show();
+        return;
+    }
+    std::string password = text.toUtf8().constData();
+    redi::ipstream proc(std::string("python scan-seed.py ") + password);
     std::string line, l;
     while (std::getline(proc.out(), l))
         line += l;
@@ -293,7 +306,7 @@ void SendDialog::continue_payment()
     }
     std::cout << "Sending " << currpay.amount << " to " << currpay.dest_addr.encoded() << std::endl;
     uint64_t value = currpay.amount + fee;
-    if (currpay.amount > value)
+    if (currpay.balance < value)
     {
         QMessageBox errmsg;
         errmsg.critical(0, tr("Error"), tr("Not enough money for payment."));

@@ -2,5 +2,7 @@
 SEED=$(sx newseed)
 ADDRESS=$(echo $SEED | sx genaddr 0)
 sx qrcode $ADDRESS qrcode.png
-qrencode seed:$SEED -o qrcode-private.png -s 10
+echo $SEED | sx mnemonic
+ENCSEED=$(echo $SEED | ccencrypt -ef | base64)
+echo $ENCSEED
 
