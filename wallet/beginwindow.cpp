@@ -12,7 +12,7 @@ std::vector<bc::transaction_type> tx_broadcast_queue;
 
 BeginWindow* mainwin = nullptr;
 
-constexpr uint64_t fee = 10000;
+constexpr uint64_t fee = 50000;
 
 struct current_payment_details
 {
@@ -336,13 +336,16 @@ void SendDialog::continue_payment()
     }
     tx.outputs.push_back(dest_output);
     // add change output also.
-    transaction_output_type change_output;
-    change_output.value = unspent.change;
-    //bc::payment_address change_addr = control.change_address();
-    bool change_script_success =
-        build_output_script(change_output.script, currpay.origin_addr);
-    BITCOIN_ASSERT(change_script_success);
-    tx.outputs.push_back(change_output);
+    if (unspent.change > 0)
+    {
+        transaction_output_type change_output;
+        change_output.value = unspent.change;
+        //bc::payment_address change_addr = control.change_address();
+        bool change_script_success =
+            build_output_script(change_output.script, currpay.origin_addr);
+        BITCOIN_ASSERT(change_script_success);
+        tx.outputs.push_back(change_output);
+    }
     // notice we have left the fee out.
     // now do inputs.
     for (const bc::output_point& prevout: unspent.points)
@@ -372,7 +375,12 @@ void SendDialog::continue_payment()
     broadcast_mutex.lock();
     tx_broadcast_queue.push_back(tx);
     broadcast_mutex.unlock();
-    sleep(1);
+    std::cout << "DEBUG INFO --------------------------" << std::endl;
+    data_chunk rawtx(satoshi_raw_size(tx));
+    satoshi_save(tx, rawtx.begin());
+    std::cout << bc::encode_hex(rawtx) << std::endl;
+    std::cout << "-------------------------------------" << std::endl;
+    sleep(4);
     std::string resinfo = std::string("Sent ") +
         bc::satoshi_to_btc(currpay.amount) + " BTC to " +
         currpay.dest_addr.encoded();

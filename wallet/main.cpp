@@ -29,6 +29,8 @@ void output_to_file(std::ofstream& file, bc::log_level level,
     file << ": " << body << std::endl;
 }
 
+obelisk::fullnode_interface* fn = nullptr;
+
 // warning: this is not good code!
 void broadcast_subsystem()
 {
@@ -69,6 +71,8 @@ void broadcast_subsystem()
         broadcast_mutex.unlock();
         auto ignore_send = [](const std::error_code&, size_t) {};
         prot.broadcast(tx, ignore_send);
+        //auto ignore_broadcast = [](const std::error_code&) {};
+        //fn->protocol.broadcast_transaction(tx, ignore_broadcast);
     }
     auto ignore_stop = [](const std::error_code&) {};
     prot.stop(ignore_stop);
@@ -82,6 +86,7 @@ int main(int argc, char** argv)
     QApplication app(argc, argv);
     bc::threadpool pool(1);
     obelisk::fullnode_interface fullnode(pool, "tcp://46.4.92.107:9091");
+    fn = &fullnode;
     BeginWindow window(fullnode);
     std::thread thr([&fullnode]()
         {
