@@ -1,4 +1,4 @@
-Dependencies: libqt4-dev
+Dependencies: libqt4-dev python-qrtools
 
   $ qmake
   $ make
